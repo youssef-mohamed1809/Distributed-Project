@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Kablammo&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="top">
+      <h1>ImageWorks</h1>
+    </div>
+    <hr />
+    <div class="container">
+      <div class="sec">
+        <h2>Upload & Modify Your Image</h2>
+      </div>
+      <div class="img-toolbar">
+        <h3>Select an Image:</h3>
+
+        <div class="input_container">
+          <input type="file" id="myFile" name="files[]" multiple />
+        </div>
+      </div>
+
+      <div>
+        <h3>Select desired operation:</h3>
+        <div class="radio-toolbar">
+          <input type="radio" id="blurring" name="option" value="blurring" />
+          <label for="blurring">Blur</label>
+
+          <input type="radio" id="sharpen" name="option" value="sharpen" />
+          <label for="sharpen">Sharpen</label>
+
+          <input
+            type="radio"
+            id="inverting"
+            name="option"
+            value="color_inversion"
+          />
+          <label for="inverting">Invert</label>
+
+          <input
+            type="radio"
+            id="edge-detection"
+            name="option"
+            value="edge_detection"
+          />
+          <label for="edge-detection">Edge Detection</label>
+
+          <!--New-->
+          <br />
+          <input type="radio" id="shrink" name="option" value="shrink" />
+          <label for="shrink">Shrink (x2)</label>
+
+          <input type="radio" id="enlarge" name="option" value="enlarge" />
+          <label for="enlarge">Enlarge (x2)</label>
+
+          <input type="radio" id="grayscale" name="option" value="gray_scale" />
+          <label for="grayscale">To Grayscale</label>
+        </div>
+      </div>
+
+      <div class="uploadFile">
+        <button onclick="upload()">Upload File</button>
+      </div>
+    </div>
+    <script
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+      type="text/javascript"
+    ></script>
+    <script src="index.js"></script>
+  </body>
+</html>
