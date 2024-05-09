@@ -2,55 +2,63 @@ from mpi4py import MPI
 import img_processing
 import cv2
 import numpy as np
+import sys
 
-comm = MPI.COMM_WORLD
-size = comm.Get_size()
-rank = comm.Get_rank()
+NUMOFPROCESSES = 5
 
-def mpi_code():
-   print("Rank: ", str(rank))
+def divide_image_horizontal(image, n):
+    height, width = image.shape[:2]
+    part_height = height // n
+    parts = []
+    for i in range(n):
+        start_y = i * part_height
+        end_y = start_y + part_height
+        parts.append(image[start_y:end_y, :])
+    return parts
+
+
+if __name__ == "__main__":
+   comm = MPI.COMM_WORLD
+   size = comm.Get_size()
+   rank = comm.Get_rank()
+   option = sys.argv[2]
+   multiple_images = sys.argv[1]
    
-   # myimg = cv2.imread("cat.jpeg")
-   # height = myimg.shape[0]
-   # width = myimg.shape[1]
-   # midx = width // 2
-   # midy = height // 2
-   
-   # q1 = myimg[0:midy, 0:midx]
-   # q2 = myimg[0:midy, midx:width]
-   # q3 = myimg[midy:height, 0:midx]
-   # q4 = myimg[midy:height, midx:width]
+   if multiple_images == "1IMG":   
+      if rank == 0:
 
-
-   # data = []
-
-
-   # if rank == 0:
-   #    data.append(q1)
-   #    data.append(q2)
-   #    data.append(q3)
-   #    data.append(q4)
-   # else:
-   #    data = None
+         print(multiple_images) 
+         ### Single Image
+         myimage = cv2.imread("uploaded/0.jpg")
+         parts = divide_image_horizontal(myimage, size)
+      else:
+         parts = None
+      data = comm.scatter(parts, root=0)
+      if option == "blurring":
+         out = img_processing.blur(data)
+         
+      elif option == "sharpen":
+         out = img_processing.sharpen(data)
+      elif option == "color_inversion":
+         out = img_processing.invert_color(data)
+      elif option == "edge_detection":
+         out = img_processing.detect_edge(data)
+      elif option == "shrink":
+         out = img_processing.shrink(data)
+      elif option == "enlarge":
+         out = img_processing.enlarge(data)
+      elif option == "gray_scale":
+         out = img_processing.grayscale(data) 
       
-   # data = comm.scatter(data, root=0)
-
-   # gray_part = img_processing.grayscale(data)
-
-   # newData = comm.gather(gray_part ,root = 0)
-   # if rank == 0:
-   #    combined_image = np.concatenate((newData[0], newData[2]))
-   #    comb2 = np.concatenate((newData[1], newData[3]))
-   #    comb = np.hstack((combined_image, comb2))    
-   #    cv2.imwrite("output.jpg", comb)
+      newData = comm.gather(out, root=0)
       
+      if rank == 0:
+         combined_image = cv2.vconcat(newData)
+         cv2.imwrite("processed/suii.jpg", combined_image) 
+   elif multiple_images == "MULTIIMG":
+      pass
+     
    MPI.Finalize()
-
-
-
-
-
-mpi_code()
 
 
 
