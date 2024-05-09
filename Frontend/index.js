@@ -20,7 +20,7 @@ function upload(){
     console.log([...formData]);
 
     $.ajax({
-        url: "http://127.0.0.1:5000/upload",
+        url: "http://ec2-34-229-1-79.compute-1.amazonaws.com:5000/upload",
         type: "post",
         data: formData,
         contentType: false,

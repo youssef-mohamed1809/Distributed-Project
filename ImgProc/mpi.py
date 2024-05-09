@@ -4,8 +4,6 @@ import cv2
 import numpy as np
 import sys
 
-NUMOFPROCESSES = 5
-
 def divide_image_horizontal(image, n):
     height, width = image.shape[:2]
     part_height = height // n
@@ -21,8 +19,10 @@ if __name__ == "__main__":
    comm = MPI.COMM_WORLD
    size = comm.Get_size()
    rank = comm.Get_rank()
-   option = sys.argv[2]
+   print(sys.argv)
    multiple_images = sys.argv[1]
+   option = sys.argv[2]   
+   num_of_images = int(sys.argv[3])
    
    if multiple_images == "1IMG":   
       if rank == 0:
@@ -56,6 +56,47 @@ if __name__ == "__main__":
          combined_image = cv2.vconcat(newData)
          cv2.imwrite("processed/suii.jpg", combined_image) 
    elif multiple_images == "MULTIIMG":
+      images = []
+      
+      if rank == 0:
+         for i in range(num_of_images):
+            images.append(cv2.imread(f"uploaded/{i}.jpg"))      
+      else:
+         pass
+      
+      data = comm.scatter(images, root=0)
+      
+      if option == "blurring":
+         out = img_processing.blur(data)
+      elif option == "sharpen":
+         out = img_processing.sharpen(data)
+      elif option == "color_inversion":
+         out = img_processing.invert_color(data)
+      elif option == "edge_detection":
+         out = img_processing.detect_edge(data)
+      elif option == "shrink":
+         out = img_processing.shrink(data)
+      elif option == "enlarge":
+         out = img_processing.enlarge(data)
+      elif option == "gray_scale":
+         out = img_processing.grayscale(data) 
+      
+      newData = comm.gather(out, root=0)
+      if rank == 0:
+         for i in range(num_of_images):
+            cv2.imwrite(f"processed/{i}.jpg", newData[i])
+      # imgperrank = num_of_images / size
+      # rem = num_of_images % size
+      # if num_of_images < size:
+      #    pass
+      # else:
+         
+      #    data = comm.scatter()
+      #    if rank == 0:
+            
+      #       pass
+      #    else:
+      #       pass      
       pass
      
    MPI.Finalize()

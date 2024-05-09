@@ -3,7 +3,7 @@ from flask_cors import CORS
 import os
 
 NUMOFPROCESSES = 5
-PATH = r"C:\Users\youss\Desktop\Dist Project\ImgProc\uploaded\\"
+PATH = r"uploaded/"
 
 app = Flask(__name__)
 CORS(app)
@@ -21,13 +21,13 @@ def receive_data():
 
 def process_images(num_of_files, option):
    if num_of_files == 1:
-      command = f"mpiexec -n {NUMOFPROCESSES} python mpi.py 1IMG {option}"
+      command = f"mpiexec -n {num_of_files} python mpi.py 1IMG {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
       print(output) 
    else:
-      command = f"mpiexec -n {NUMOFPROCESSES} python mpi.py MULTIIMG {option}"
+      command = f"mpiexec -n {num_of_files} python mpi.py MULTIIMG {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()

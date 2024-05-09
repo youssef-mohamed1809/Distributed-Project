@@ -1,6 +1,6 @@
 ### FORWARD TO LOADBALANCER ###
 URL ="http://127.0.0.1:5001/receive_data"
-PATH = r"C:\Users\youss\Desktop\Dist Project\Flask Server\files\\"
+PATH = "files/"
 import requests
 from flask import Flask, render_template, request, send_file, jsonify
 from flask_cors import CORS
