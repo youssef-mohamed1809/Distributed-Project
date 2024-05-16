@@ -1,3 +1,5 @@
+// import "index2.js";
+
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     .replace(/[xy]/g, function (c) {
@@ -10,7 +12,8 @@ function uuidv4() {
 function upload(){
     const id = uuidv4();
     console.log(id);
-
+    // seif(id);
+    sessionStorage.setItem("id", id);
 
     let options = document.getElementsByName("option");
     let option = "";
@@ -28,8 +31,6 @@ function upload(){
     for(let i = 0; i < files.length; i++){
         formData.append("files[]", files[i]);
     }
-    
-    
     
     console.log([...formData]);
 
