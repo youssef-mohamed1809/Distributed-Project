@@ -1,10 +1,3 @@
-var ID = "";
-
-function seif(id){
-    ID = id;
-}
-
-
 window.onload = function(){
     downloadAnchor = document.getElementById("downloadAnchorTag");
     user_id = sessionStorage.getItem("id");
