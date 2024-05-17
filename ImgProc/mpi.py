@@ -53,28 +53,36 @@ def process_one_image(option):
         cv2.imwrite("processed/suii.jpg", combined_image)
 
 def process_multiple_images(option):
-    
     images = []
-    
-    for i in range(num_of_images):
-        images.append(cv2.imread(f"uploaded/{i}.png"))
-    
+    if rank == 0:
+        for i in range(num_of_images):
+            images.append(cv2.imread(f"uploaded/{i}.jpg"))
+    else:
+        images = None
     images_per_process = num_of_images // size
     extra_images = num_of_images % size
 
-    start_index = rank * images_per_process + min(rank, extra_images)
-    end_index = start_index + images_per_process + (1 if rank < extra_images else 0)
+    if rank == 0:
+        data_to_scatter = []
+        start_index = 0
+        for i in range(size):
+            end_index = start_index + images_per_process + (1 if i < extra_images else 0)
+            data_to_scatter.append(images[start_index:end_index])
+            start_index = end_index
+    else:
+        data_to_scatter = None
 
-    subset_images = images[start_index:end_index]
-
+    subset_images = comm.scatter(data_to_scatter, root=0)
     processed_images = [process_img(img, option) for img in subset_images]
-
     all_processed_images = comm.gather(processed_images, root=0)
 
     if rank == 0:
         all_processed_images = [img for sublist in all_processed_images for img in sublist]
-        for i in range(len(all_processed_images)):
+        for i in range(num_of_images):
             cv2.imwrite(f"processed/{i}.jpg", all_processed_images[i])
+        # print("All processed images:", all_processed_images)
+
+
 
 comm = MPI.COMM_WORLD
 size = comm.Get_size()
