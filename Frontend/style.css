@@ -131,10 +131,18 @@ button a:visited {
     transition: .5s;
 }
 .downloadFile {
-    position: absolute;
-    left: 45%;
+    justify-content: center;
     font-size: 48px;
     display: block;
+    align-content: center;
+    justify-content: center;
+}
+
+.dcont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .downloadFile :hover {
