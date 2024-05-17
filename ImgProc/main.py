@@ -54,7 +54,7 @@ def process_images(num_of_files, option):
       output_stream.close()
       # print(output) 
    else:
-      command = f"mpiexec -n {num_of_files} python mpi.py MULTIIMG {option} {num_of_files}"
+      command = f"mpiexec -n 4 python mpi.py MULTIIMG {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
