@@ -48,13 +48,13 @@ def save_to_s3(userid):
 
 def process_images(num_of_files, option):
    if num_of_files == 1:
-      command = f"mpiexec -n {num_of_files} -host master,worker1,worker2,worker3 python mpi.py 1IMG {option} {num_of_files}"
+      command = f"mpiexec -n {num_of_files} python mpi.py {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
       # print(output) 
    else:
-      command = f"mpiexec -n 4 -host master,worker1,worker2,worker3 4 python mpi.py MULTIIMG {option} {num_of_files}"
+      command = f"mpiexec -n 4 python mpi.py {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
