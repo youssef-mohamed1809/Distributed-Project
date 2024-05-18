@@ -1,5 +1,5 @@
 ### FORWARD TO LOADBALANCER ###
-URL ="http://127.0.0.1:5001/receive_data"
+URL ="http://ec2-13-51-163-255.eu-north-1.compute.amazonaws.com:5000/receive_data"
 PATH = "files/"
 import requests
 from flask import Flask, render_template, request, send_file, jsonify

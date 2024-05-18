@@ -3,6 +3,23 @@ from flask_cors import CORS
 import os
 import boto3
 
+
+WORKERS = [
+   {
+      "name": "worker1",
+      "ip": "51.20.51.151"
+   },
+   {
+      "name": "worker2",
+      "ip": "16.170.218.108"
+   },
+   {
+      "name": "worker3",
+      "ip": "13.60.31.52"
+   }
+] 
+
+
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 NUMOFPROCESSES = 5
@@ -46,15 +63,36 @@ def save_to_s3(userid):
         s3.upload_file(file_path, BUCKET_NAME, folder_name + filename)
       #   print(f'Uploaded {filename} to {folder_name} in {bucket_name}')
 
+
+def check_available_workers():
+   alive_workers = []
+   for worker in WORKERS:
+      stream = os.popen(f"ping -c 4 {worker['ip']}")
+      output = stream.read()
+      if "0 received" in output:
+         alive_workers.append(worker['name'])
+   return alive_workers
+
 def process_images(num_of_files, option):
    if num_of_files == 1:
-      command = f"mpiexec -n {num_of_files} python mpi.py {option} {num_of_files}"
+      
+      alive_workers = check_available_workers()
+      s = "master,"
+      for w in alive_workers:
+         s += alive_workers
+         s += ","
+      command = f"mpiexec -n {len(alive_workers) + 1} -host {s} python mpi.py {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
       # print(output) 
    else:
-      command = f"mpiexec -n 4 python mpi.py {option} {num_of_files}"
+      alive_workers = check_available_workers()
+      s = "master,"
+      for w in alive_workers:
+         s += alive_workers
+         s += ","
+      command = f"mpiexec -n {len(alive_workers) + 1} -host {s} python mpi.py {option} {num_of_files}"
       output_stream = os.popen(command)
       output = output_stream.read()
       output_stream.close()
